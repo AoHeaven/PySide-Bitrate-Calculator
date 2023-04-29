@@ -1,0 +1,2 @@
+# PySide-Bitrate-Calculator
+ 

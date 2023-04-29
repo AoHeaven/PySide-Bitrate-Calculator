@@ -1,0 +1,21 @@
+{
+    "text_window_title": "Битрейт калькулятор",
+    "text_groupbox_history": "История",
+    "text_button_history": "Очистить историю",
+    "text_title_label_auto": "Автоматическое заполнение",
+    "text_button_open": "Выбрать файл",
+    "text_label_title_manual": "Ручное заполнение",
+    "text_label_video_size": "Размер видео в МБ",
+    "text_label_video_duration": "Длительность видео в секундах",
+    "text_button_calc": "Рассчитать",
+    "text_button_settings": "Настройки",
+    "text_msg_clear_history_title": "Уведомление",
+    "text_msg_clear_history_desc": "История очищена",
+    "text_open_dialog_title": "Выберите файл",
+    "text_msg_result_title_failed": "Ошибка",
+    "text_msg_result_title_failed_desc": "Одина или две строки пустые.",
+    "text_msg_result_title_success": "Результат",
+    "text_msg_result_desc": "Средний битрейт видео",
+    "text_kbits": "кбит/с",
+    "text_language": "Язык"
+}

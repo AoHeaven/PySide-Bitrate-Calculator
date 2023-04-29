@@ -1,0 +1,21 @@
+{
+    "text_window_title": "Bitrate calculator",
+    "text_groupbox_history": "History",
+    "text_button_history": "Clear history",
+    "text_title_label_auto": "Auto-complete",
+    "text_button_open": "Select file",
+    "text_label_title_manual": "Manual filling",
+    "text_label_video_size": "Video size in MB",
+    "text_label_video_duration": "Video duration in seconds",
+    "text_button_calc": "Calculate",
+    "text_button_settings": "Settings",
+    "text_msg_clear_history_title": "Notification",
+    "text_msg_clear_history_desc": "History cleared",
+    "text_open_dialog_title": "Select file",
+    "text_msg_result_title_failed": "Error",
+    "text_msg_result_title_failed_desc": "One or two lines are empty.",
+    "text_msg_result_title_success": "Result",
+    "text_msg_result_desc": "Average video bitrate",
+    "text_kbits": "kbps",
+    "text_language": "Language"
+}

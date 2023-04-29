@@ -1,0 +1,21 @@
+{
+    "text_window_title": "Бітрейт калькулятор",
+    "text_groupbox_history": "Історія",
+    "text_button_history": "Очистити історію",
+    "text_title_label_auto": "Автоматичне заповнення",
+    "text_button_open": "Вибрати файл",
+    "text_label_title_manual": "Ручне заповнення",
+    "text_label_video_size": "Розмір відео у МБ",
+    "text_label_video_duration": "Тривалість відео в секундах",
+    "text_button_calc": "Обчислити",
+    "text_button_settings": "Налаштування",
+    "text_msg_clear_history_title": "Сповіщення",
+    "text_msg_clear_history_desc": "Історія очищена",
+    "text_open_dialog_title": "Виберіть файл",
+    "text_msg_result_title_failed": "Помилка",
+    "text_msg_result_title_failed_desc": "Один або два рядки є пустими.",
+    "text_msg_result_title_success": "Результат",
+    "text_msg_result_desc": "Середній бітрейт відео",
+    "text_kbits": "кбіт/с",
+    "text_language": "Мова"
+}

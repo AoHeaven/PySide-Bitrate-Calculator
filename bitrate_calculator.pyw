@@ -1,0 +1,306 @@
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import QRegularExpression
+from PySide6.QtGui import QRegularExpressionValidator
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QListWidget, QGroupBox, QLineEdit, QMessageBox, QFileDialog, QDialog, QComboBox
+import sys, cv2, os, json
+
+
+# Додайте мову в кінець списку для підтримки програми (якщо наявний файл перекладу)
+supported_languages = {"English": "enUS",
+                       "Русский": "ruRU",
+                       "Українська": "ukUA"}
+
+
+class BitrateCalculator(QMainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+
+        with open("configs/settings.json", encoding="utf-8") as f:
+            current_language = json.load(f)
+
+
+        for lang_code in supported_languages.values():
+            if lang_code == list(current_language.values())[0]:
+                try:
+                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+                except:
+                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+
+
+        # Параметри вікна
+        self.setWindowTitle(translation_text["text_window_title"])
+        self.setFixedSize(640, 330)
+
+
+        # Головний віджет вікна (саме на цьому віджеті розташовані усі інші елементи)
+        self.widget_main = QWidget(self)
+        self.widget_main.setGeometry(0, 0, 640, 330)
+
+        
+        # Створення фрейму "Історія"
+        self.groupbox_history = QGroupBox(self.widget_main)
+        self.groupbox_history.setTitle(translation_text["text_groupbox_history"])
+        self.groupbox_history.setFixedSize(180, 315)
+        self.groupbox_history.move(10, 5)
+
+
+        # Створення списку "Історія"
+        self.list_history = QListWidget(self.widget_main)
+        self.list_history.setFixedSize(160, 240)
+        self.list_history.move(20, 30)
+
+
+        # Створення кнопки очищення історії
+        self.button_history = QPushButton(self.widget_main)
+        self.button_history.setText(translation_text["text_button_history"])
+        self.button_history.setFixedSize(160, 30)
+        self.button_history.move(20, 280)
+
+        # Подія очищення історії
+        self.button_history.clicked.connect(self.event_clear_history)
+
+
+        # Створення фрейму "Автоматичне заповнення"
+        self.label_title_auto = QGroupBox(self.widget_main)
+        self.label_title_auto.setTitle(translation_text["text_title_label_auto"])
+        self.label_title_auto.setFixedSize(430, 70)
+        self.label_title_auto.move(200, 5)
+
+
+        # Створення кнопки "Вибрати файл"
+        self.button_open = QPushButton(self.widget_main)
+        self.button_open.setText(translation_text["text_button_open"])
+        self.button_open.setFixedSize(410, 30)
+        self.button_open.move(210, 30)
+
+        self.button_open.clicked.connect(self.event_open_file)
+
+
+        # Створення мітки "Ручне заповнення"
+        self.label_title_manual = QGroupBox(self.widget_main)
+        self.label_title_manual.setTitle(translation_text["text_label_title_manual"])
+        self.label_title_manual.setFixedSize(430, 240)
+        self.label_title_manual.move(200, 80)
+
+
+        # Створення мітки "Розмір відео у МБ"
+        self.label_video_size = QLabel(self.widget_main)
+        self.label_video_size.setText(translation_text["text_label_video_size"])
+        self.label_video_size.setFixedWidth(self.label_video_size.sizeHint().width())
+        self.label_video_size.move(210, 105)
+
+
+        # Створення поля до мітки "Розмір відео у МБ"
+        self.ltext_dynamic_size1 = 210+self.label_video_size.sizeHint().width()+10
+
+        self.ltext_video_size = QLineEdit(self.widget_main)
+        self.ltext_video_size.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*")))
+        self.ltext_video_size.setFixedSize(640-self.ltext_dynamic_size1-20, 20)
+        self.ltext_video_size.move(self.ltext_dynamic_size1, 105)
+
+
+        # Створення мітки "Тривалість відео в секундах"
+        self.label_video_duration = QLabel(self.widget_main)
+        self.label_video_duration.setText(translation_text["text_label_video_duration"])
+        self.label_video_duration.setFixedWidth(self.label_video_duration.sizeHint().width())
+        self.label_video_duration.move(210, 135)
+
+
+        # Створення поля до мітки "Тривалість відео в секундах"
+        self.ltext_dynamic_size2 = 210+self.label_video_duration.sizeHint().width()+10
+
+        self.ltext_video_duration = QLineEdit(self.widget_main)
+        self.ltext_video_duration.setValidator(QRegularExpressionValidator(QRegularExpression("[0-9]*")))
+        self.ltext_video_duration.setFixedSize(640-self.ltext_dynamic_size2-20, 20)
+        self.ltext_video_duration.move(self.ltext_dynamic_size2, 135)
+
+
+        # Створення кнопки "Обчислити"
+        self.button_calc = QPushButton(self)
+        self.button_calc.setText(translation_text["text_button_calc"])
+        self.button_calc.setFixedSize(410, 30)
+        self.button_calc.move(210, 175)
+
+        self.button_calc.clicked.connect(self.event_calculate)
+
+        # Створення кнопки "Налаштування"
+        self.button_settings = QPushButton(self)
+        self.button_settings.setText(translation_text["text_button_settings"])
+        self.button_settings.setFixedSize(195, 30)
+        self.button_settings.move(425, 280)
+
+        self.button_settings.clicked.connect(self.event_show_settings)
+
+
+    def event_clear_history(self):
+        if not self.list_history.count() == 0:
+            with open("configs/settings.json", encoding="utf-8") as f:
+                current_language = json.load(f)
+
+
+            for lang_code in supported_languages.values():
+                if lang_code == list(current_language.values())[0]:
+                    try:
+                        with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                            translation_text = json.load(g)
+                            break
+                    except:
+                        with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                            translation_text = json.load(g)
+                            break
+
+            self.list_history.clear()
+
+            self.msg_clear_history = QMessageBox(self)
+            self.msg_clear_history.setWindowTitle(translation_text["text_msg_clear_history_title"])
+            self.msg_clear_history.setText(translation_text["text_msg_clear_history_desc"])
+            self.msg_clear_history.setIcon(QtWidgets.QMessageBox.Icon(QMessageBox.Information))
+            self.msg_clear_history.exec()
+
+
+    def event_open_file(self):
+        with open("configs/settings.json", encoding="utf-8") as f:
+            current_language = json.load(f)
+
+
+        for lang_code in supported_languages.values():
+            if lang_code == list(current_language.values())[0]:
+                try:
+                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+                except:
+                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+
+
+        self.file_path, _ = QFileDialog.getOpenFileName(None, translation_text["text_open_dialog_title"], "", "Video Files (*.avi *.mp4 *.mkv *.mov *.wmv *.webm)")
+
+        if self.file_path:
+            self.video = cv2.VideoCapture(self.file_path)
+            self.video_fps = self.video.get(cv2.CAP_PROP_FPS)
+            self.video_frame_count = int(self.video.get(cv2.CAP_PROP_FRAME_COUNT))
+            self.video_duration = self.video_frame_count/self.video_fps
+
+            self.ltext_video_size.setText(str(round(os.path.getsize(self.file_path)/1024/1024, 1)))
+            self.ltext_video_duration.setText(str(int(self.video_duration)))
+
+
+    def event_calculate(self):
+        with open("configs/settings.json", encoding="utf-8") as f:
+            current_language = json.load(f)
+
+
+        for lang_code in supported_languages.values():
+            if lang_code == list(current_language.values())[0]:
+                try:
+                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+                except:
+                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+
+
+        self.result_msg = QMessageBox(self)
+
+        if not self.ltext_video_size.text().strip() or not self.ltext_video_duration.text().strip():
+            self.result_msg.setWindowTitle(translation_text["text_msg_result_title_failed"])
+            self.result_msg.setText(translation_text["text_msg_result_title_failed_desc"])
+            self.result_msg.setIcon(QtWidgets.QMessageBox.Icon(QMessageBox.Critical))
+            self.result_msg.exec()
+        else:
+            self.video_size = float(self.ltext_video_size.text())
+            self.video_duration = float(self.ltext_video_duration.text())
+            
+            self.result = round((self.video_size/self.video_duration)*8*1000, 1)
+
+            self.result_msg.setWindowTitle(translation_text["text_msg_result_title_success"])
+            self.result_msg.setText(f"{translation_text['text_msg_result_desc']} - {self.result} {translation_text['text_kbits']}.")
+            self.result_msg.setIcon(QtWidgets.QMessageBox.Icon(QMessageBox.Information))
+            self.result_msg.exec()
+
+            self.list_history.addItem(f"{self.result} {translation_text['text_kbits']}")
+
+            self.ltext_video_size.clear()
+            self.ltext_video_duration.clear()
+
+
+    def event_show_settings(self):  
+        with open("configs/settings.json", encoding="utf-8") as f:
+            current_language = json.load(f)
+
+
+        for lang_code in supported_languages.values():
+            if lang_code == list(current_language.values())[0]:
+                try:
+                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+                except:
+                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+
+
+        def event_submit():
+            new_language = {'language': ''}
+
+            if self.combobox_language.currentText() == list(supported_languages.keys())[0]:
+                new_language = {'language': f'{list(supported_languages.values())[0]}'}
+            elif self.combobox_language.currentText() == list(supported_languages.keys())[1]:
+                new_language = {'language': f'{list(supported_languages.values())[1]}'}
+            elif self.combobox_language.currentText() == list(supported_languages.keys())[2]:
+                new_language = {'language': f'{list(supported_languages.values())[2]}'}
+
+            with open("configs/settings.json", "w") as f:
+                json.dump(new_language, f)
+            
+            self.window_settings.close()
+            
+
+        self.window_settings = QDialog(self)
+
+        self.window_settings.setFixedSize(512, 264)
+        self.window_settings.setWindowTitle("Налаштування")
+
+
+        self.label_language = QLabel(self.window_settings)
+        self.label_language.setText(translation_text["text_language"])
+        self.label_language.setFixedWidth(self.label_language.sizeHint().width())
+        self.label_language.move(10, 20)
+
+
+        self.combobox_language = QComboBox(self.window_settings)
+        self.combobox_language.setFixedSize(512-20-self.label_language.sizeHint().width()-20, 20)
+        self.combobox_language.move(20+self.label_language.sizeHint().width()+10, 20)
+
+        for language in supported_languages:
+            self.combobox_language.addItem(language)
+
+        self.combobox_language.setCurrentIndex(-1)
+
+
+        self.button_submit = QPushButton(self.window_settings)
+        self.button_submit.setText("OK")
+        self.button_submit.setFixedSize(120, 25)
+        self.button_submit.move(382, 229)
+        self.button_submit.clicked.connect(event_submit)
+
+        self.window_settings.exec()
+
+
+
+app = QApplication(sys.argv)
+
+window_main = BitrateCalculator()
+window_main.show()
+
+app.exec()
