@@ -13,6 +13,9 @@
 pip install pyside6
 pip install opencv-python
 ```
+Або ж встановити необхідні пакети з requirements.txt:
+
+`pip install -r requirements.txt`
 
 Для встановлення бібліотек вище потрібен [pip](https://pip.pypa.io/en/latest/installation/).
 ## Запуск
