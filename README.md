@@ -26,6 +26,6 @@ pip install opencv-python
 
 :x: Зробити вибір тем
 
-## Примітка
+## Note
 
-Відправляйте свої переклади на пошту aoheaven@protonmail.com, я залюбки їх додам до програми!
+Send your translations to aoheaven@protonmail.com, and I will be happy to add them to the program!
