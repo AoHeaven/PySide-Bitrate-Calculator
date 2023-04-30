@@ -2,26 +2,38 @@
  
 ![PySide Bitrate Calculator](https://i.ibb.co/7CBqKRV/pyside-bitrate-calculator.png)
 
-Програма була написана для себе, але була вивантажена для усіх охочих.
+The program was written for myself, but was uploaded for everyone to use.
 
-## Основне
-**PySide Bitrate Calculator** має змогу підрахувати середній бітрейт відео. Все, що для цього потрібно - це сам відеофайл. Також є змога вручну ввести результати.
+## Main
+**PySide Bitrate Calculator** allows you to calculate the average bitrate of a video. All you need is the video file itself. You can also enter the results manually.
+
+## Languages currently supported
+
++ English
++ Русский
++ Українська
       
-## Необхідні бібліотеки
-Для запуску програми потрібна бібліотека PySide6 та OpenCV. Щоб їх встановити, треба в cmd ввести:
+## Required libraries
+To run the program, you need pre-installed libraries such as `PySide6` and `OpenCV`. To install them, enter `cmd`:
 ```
 pip install pyside6
 pip install opencv-python
 ```
-Або ж встановити необхідні пакети з requirements.txt:
+Or install the necessary packages from the `requirements.txt`:
 
 `pip install -r requirements.txt`
 
-Для встановлення бібліотек вище потрібен [pip](https://pip.pypa.io/en/latest/installation/).
-## Запуск
-Для запуску програми потрібен встановлений інтерпретатор [Python](https://www.python.org/) та необхідні бібліотеки. Щоб запустити програму, потрібно запустити файл `bitrate_calculator.pyw`.
+To install the libraries above, you need [pip](https://pip.pypa.io/en/latest/installation/).
+## Launch
+To run the program, you need the [Python](https://www.python.org/) interpreter and the libraries mentioned above installed. After installation, run the file `bitrate_calculator.pyw`.
 
-## Подальші плани
-:x: Покращити зміну мови
+## Future plans
+:x: Program improvements
 
-:x: Зробити вибір тем
+:x: Improve language switching
+
+:x: Make support for different themes
+
+## Note
+
+Send your translations to aoheaven@protonmail.com, and I will be happy to add them to the program!
