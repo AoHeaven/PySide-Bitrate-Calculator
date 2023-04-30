@@ -5,10 +5,9 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushB
 import sys, cv2, os, json
 
 
-# Додайте мову в кінець списку для підтримки програми (якщо наявний файл перекладу)
-supported_languages = {"English": "enUS",
-                       "Русский": "ruRU",
-                       "Українська": "ukUA"}
+# Завантаження списку усіх мов. Якщо ваша мова відсутня в списку, напишіть мені, я залюбки додам її
+with open("configs/languages.json", encoding="utf-8") as languages:
+    lang_list = json.load(languages)
 
 
 class BitrateCalculator(QMainWindow):
@@ -16,12 +15,13 @@ class BitrateCalculator(QMainWindow):
         super().__init__(parent)
 
 
+        # Завантаження даних з налаштувань
         with open("configs/settings.json", encoding="utf-8") as f:
-            current_language = json.load(f)
+            settings = json.load(f)
 
-
-        for lang_code in supported_languages.values():
-            if lang_code == list(current_language.values())[0]:
+        # Завантаження перекладу до вибраної мови
+        for lang_code in lang_list.values():
+            if settings['language'] == lang_code:
                 try:
                     with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
                         translation_text = json.load(g)
@@ -143,7 +143,7 @@ class BitrateCalculator(QMainWindow):
                 current_language = json.load(f)
 
 
-            for lang_code in supported_languages.values():
+            for lang_code in lang_list.values():
                 if lang_code == list(current_language.values())[0]:
                     try:
                         with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
@@ -168,7 +168,7 @@ class BitrateCalculator(QMainWindow):
             current_language = json.load(f)
 
 
-        for lang_code in supported_languages.values():
+        for lang_code in lang_list.values():
             if lang_code == list(current_language.values())[0]:
                 try:
                     with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
@@ -197,7 +197,7 @@ class BitrateCalculator(QMainWindow):
             current_language = json.load(f)
 
 
-        for lang_code in supported_languages.values():
+        for lang_code in lang_list.values():
             if lang_code == list(current_language.values())[0]:
                 try:
                     with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
@@ -238,7 +238,7 @@ class BitrateCalculator(QMainWindow):
             current_language = json.load(f)
 
 
-        for lang_code in supported_languages.values():
+        for lang_code in lang_list.values():
             if lang_code == list(current_language.values())[0]:
                 try:
                     with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
@@ -250,20 +250,29 @@ class BitrateCalculator(QMainWindow):
                         break
 
 
+        path = 'lang/'
+        files = os.listdir(path)
+
+
         def event_submit():
             new_language = {'language': ''}
 
-            if self.combobox_language.currentText() == list(supported_languages.keys())[0]:
-                new_language = {'language': f'{list(supported_languages.values())[0]}'}
-            elif self.combobox_language.currentText() == list(supported_languages.keys())[1]:
-                new_language = {'language': f'{list(supported_languages.values())[1]}'}
-            elif self.combobox_language.currentText() == list(supported_languages.keys())[2]:
-                new_language = {'language': f'{list(supported_languages.values())[2]}'}
+            for i, (language, language_code) in enumerate(lang_list.items()):
+                if self.combobox_language.currentText() == language:
+                    new_language['language'] = language_code
 
             with open("configs/settings.json", "w") as f:
                 json.dump(new_language, f)
-            
-            self.window_settings.close()
+
+            self.msg_submit = QMessageBox()
+            self.msg_submit.setWindowTitle(translation_text["text_notify"])
+            self.msg_submit.setText(translation_text['text_msg_submit_desc'])
+            self.msg_submit.setIcon(QtWidgets.QMessageBox.Icon(QMessageBox.Information))
+            self.msg_submit.exec()
+
+            if self.msg_submit:
+                self.window_settings.close()
+                sys.exit()
             
 
         self.window_settings = QDialog(self)
@@ -282,8 +291,14 @@ class BitrateCalculator(QMainWindow):
         self.combobox_language.setFixedSize(512-20-self.label_language.sizeHint().width()-20, 20)
         self.combobox_language.move(20+self.label_language.sizeHint().width()+10, 20)
 
-        for language in supported_languages:
-            self.combobox_language.addItem(language)
+        for i, (language, language_code) in enumerate(lang_list.items()):
+            for file in files:
+                filename, extension = os.path.splitext(file)
+
+                if filename == language_code:
+                    self.combobox_language.addItem(language)
+                    continue
+
 
         self.combobox_language.setCurrentIndex(-1)
 

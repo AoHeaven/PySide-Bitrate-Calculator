@@ -17,5 +17,7 @@
     "text_msg_result_title_success": "Result",
     "text_msg_result_desc": "Average video bitrate",
     "text_kbits": "kbps",
-    "text_language": "Language"
+    "text_language": "Language",
+    "text_notify": "Notification",
+    "text_msg_submit_desc": "The program will be closed until the new settings are applied."
 }

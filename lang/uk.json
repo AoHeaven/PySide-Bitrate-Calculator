@@ -17,5 +17,7 @@
     "text_msg_result_title_success": "Результат",
     "text_msg_result_desc": "Середній бітрейт відео",
     "text_kbits": "кбіт/с",
-    "text_language": "Мова"
+    "text_language": "Мова",
+    "text_notify": "Сповіщення",
+    "text_msg_submit_desc": "Програма буде закрита для застосування нових налаштувань."
 }
