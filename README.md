@@ -30,7 +30,7 @@ To run the program, you need the [Python](https://www.python.org/) interpreter a
 ## Future plans
 :x: Program improvements
 
-:x: Improve language switching
+:heavy_check_mark: Improve language switching
 
 :x: Make support for different themes
 
