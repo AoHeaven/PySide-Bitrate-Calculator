@@ -9,15 +9,13 @@ import sys, cv2, os, json
 with open("configs/languages.json", encoding="utf-8") as languages:
     lang_list = json.load(languages)
 
+# Завантаження даних з налаштувань
+    with open("configs/settings.json", encoding="utf-8") as f:
+        settings = json.load(f)
 
 class BitrateCalculator(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-
-
-        # Завантаження даних з налаштувань
-        with open("configs/settings.json", encoding="utf-8") as f:
-            settings = json.load(f)
 
         # Завантаження перекладу до вибраної мови
         for lang_code in lang_list.values():
@@ -31,39 +29,31 @@ class BitrateCalculator(QMainWindow):
                         translation_text = json.load(g)
                         break
 
-
         # Параметри вікна
         self.setWindowTitle(translation_text["text_window_title"])
         self.setFixedSize(640, 330)
-
 
         # Головний віджет вікна (саме на цьому віджеті розташовані усі інші елементи)
         self.widget_main = QWidget(self)
         self.widget_main.setGeometry(0, 0, 640, 330)
 
-        
         # Створення фрейму "Історія"
         self.groupbox_history = QGroupBox(self.widget_main)
         self.groupbox_history.setTitle(translation_text["text_groupbox_history"])
         self.groupbox_history.setFixedSize(180, 315)
         self.groupbox_history.move(10, 5)
 
-
         # Створення списку "Історія"
         self.list_history = QListWidget(self.widget_main)
         self.list_history.setFixedSize(160, 240)
         self.list_history.move(20, 30)
-
 
         # Створення кнопки очищення історії
         self.button_history = QPushButton(self.widget_main)
         self.button_history.setText(translation_text["text_button_history"])
         self.button_history.setFixedSize(160, 30)
         self.button_history.move(20, 280)
-
-        # Подія очищення історії
         self.button_history.clicked.connect(self.event_clear_history)
-
 
         # Створення фрейму "Автоматичне заповнення"
         self.label_title_auto = QGroupBox(self.widget_main)
@@ -71,15 +61,12 @@ class BitrateCalculator(QMainWindow):
         self.label_title_auto.setFixedSize(430, 70)
         self.label_title_auto.move(200, 5)
 
-
         # Створення кнопки "Вибрати файл"
         self.button_open = QPushButton(self.widget_main)
         self.button_open.setText(translation_text["text_button_open"])
         self.button_open.setFixedSize(410, 30)
         self.button_open.move(210, 30)
-
         self.button_open.clicked.connect(self.event_open_file)
-
 
         # Створення мітки "Ручне заповнення"
         self.label_title_manual = QGroupBox(self.widget_main)
@@ -87,13 +74,11 @@ class BitrateCalculator(QMainWindow):
         self.label_title_manual.setFixedSize(430, 240)
         self.label_title_manual.move(200, 80)
 
-
         # Створення мітки "Розмір відео у МБ"
         self.label_video_size = QLabel(self.widget_main)
         self.label_video_size.setText(translation_text["text_label_video_size"])
         self.label_video_size.setFixedWidth(self.label_video_size.sizeHint().width())
         self.label_video_size.move(210, 105)
-
 
         # Створення поля до мітки "Розмір відео у МБ"
         self.ltext_dynamic_size1 = 210+self.label_video_size.sizeHint().width()+10
@@ -103,13 +88,11 @@ class BitrateCalculator(QMainWindow):
         self.ltext_video_size.setFixedSize(640-self.ltext_dynamic_size1-20, 20)
         self.ltext_video_size.move(self.ltext_dynamic_size1, 105)
 
-
         # Створення мітки "Тривалість відео в секундах"
         self.label_video_duration = QLabel(self.widget_main)
         self.label_video_duration.setText(translation_text["text_label_video_duration"])
         self.label_video_duration.setFixedWidth(self.label_video_duration.sizeHint().width())
         self.label_video_duration.move(210, 135)
-
 
         # Створення поля до мітки "Тривалість відео в секундах"
         self.ltext_dynamic_size2 = 210+self.label_video_duration.sizeHint().width()+10
@@ -119,13 +102,11 @@ class BitrateCalculator(QMainWindow):
         self.ltext_video_duration.setFixedSize(640-self.ltext_dynamic_size2-20, 20)
         self.ltext_video_duration.move(self.ltext_dynamic_size2, 135)
 
-
         # Створення кнопки "Обчислити"
         self.button_calc = QPushButton(self)
         self.button_calc.setText(translation_text["text_button_calc"])
         self.button_calc.setFixedSize(410, 30)
         self.button_calc.move(210, 175)
-
         self.button_calc.clicked.connect(self.event_calculate)
 
         # Створення кнопки "Налаштування"
@@ -133,7 +114,6 @@ class BitrateCalculator(QMainWindow):
         self.button_settings.setText(translation_text["text_button_settings"])
         self.button_settings.setFixedSize(195, 30)
         self.button_settings.move(425, 280)
-
         self.button_settings.clicked.connect(self.event_show_settings)
 
 
@@ -141,7 +121,6 @@ class BitrateCalculator(QMainWindow):
         if not self.list_history.count() == 0:
             with open("configs/settings.json", encoding="utf-8") as f:
                 current_language = json.load(f)
-
 
             for lang_code in lang_list.values():
                 if lang_code == list(current_language.values())[0]:
@@ -167,7 +146,6 @@ class BitrateCalculator(QMainWindow):
         with open("configs/settings.json", encoding="utf-8") as f:
             current_language = json.load(f)
 
-
         for lang_code in lang_list.values():
             if lang_code == list(current_language.values())[0]:
                 try:
@@ -178,7 +156,6 @@ class BitrateCalculator(QMainWindow):
                     with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
                         translation_text = json.load(g)
                         break
-
 
         self.file_path, _ = QFileDialog.getOpenFileName(None, translation_text["text_open_dialog_title"], "", "Video Files (*.avi *.mp4 *.mkv *.mov *.wmv *.webm)")
 
@@ -196,7 +173,6 @@ class BitrateCalculator(QMainWindow):
         with open("configs/settings.json", encoding="utf-8") as f:
             current_language = json.load(f)
 
-
         for lang_code in lang_list.values():
             if lang_code == list(current_language.values())[0]:
                 try:
@@ -208,7 +184,6 @@ class BitrateCalculator(QMainWindow):
                         translation_text = json.load(g)
                         break
 
-
         self.result_msg = QMessageBox(self)
 
         if not self.ltext_video_size.text().strip() or not self.ltext_video_duration.text().strip():
@@ -218,8 +193,7 @@ class BitrateCalculator(QMainWindow):
             self.result_msg.exec()
         else:
             self.video_size = float(self.ltext_video_size.text())
-            self.video_duration = float(self.ltext_video_duration.text())
-            
+            self.video_duration = float(self.ltext_video_duration.text()) 
             self.result = round((self.video_size/self.video_duration)*8*1000, 1)
 
             self.result_msg.setWindowTitle(translation_text["text_msg_result_title_success"])
@@ -237,7 +211,6 @@ class BitrateCalculator(QMainWindow):
         with open("configs/settings.json", encoding="utf-8") as f:
             current_language = json.load(f)
 
-
         for lang_code in lang_list.values():
             if lang_code == list(current_language.values())[0]:
                 try:
@@ -249,10 +222,8 @@ class BitrateCalculator(QMainWindow):
                         translation_text = json.load(g)
                         break
 
-
         path = 'lang/'
         files = os.listdir(path)
-
 
         def event_submit():
             new_language = {'language': ''}
@@ -272,20 +243,17 @@ class BitrateCalculator(QMainWindow):
 
             if self.msg_submit:
                 self.window_settings.close()
-                sys.exit()
-            
+                sys.exit() 
 
         self.window_settings = QDialog(self)
 
         self.window_settings.setFixedSize(512, 264)
         self.window_settings.setWindowTitle("Налаштування")
 
-
         self.label_language = QLabel(self.window_settings)
         self.label_language.setText(translation_text["text_language"])
         self.label_language.setFixedWidth(self.label_language.sizeHint().width())
         self.label_language.move(10, 20)
-
 
         self.combobox_language = QComboBox(self.window_settings)
         self.combobox_language.setFixedSize(512-20-self.label_language.sizeHint().width()-20, 20)
@@ -297,11 +265,12 @@ class BitrateCalculator(QMainWindow):
 
                 if filename == language_code:
                     self.combobox_language.addItem(language)
-                    continue
+                    
+                    if language_code == settings['language']:
+                        index = self.combobox_language.findText(language)
+                        self.combobox_language.setCurrentIndex(index)
 
-
-        self.combobox_language.setCurrentIndex(-1)
-
+        self.language_index = self.combobox_language.findText(language)
 
         self.button_submit = QPushButton(self.window_settings)
         self.button_submit.setText("OK")
@@ -310,7 +279,6 @@ class BitrateCalculator(QMainWindow):
         self.button_submit.clicked.connect(event_submit)
 
         self.window_settings.exec()
-
 
 
 app = QApplication(sys.argv)
