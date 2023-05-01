@@ -1,7 +1,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QRegularExpression
-from PySide6.QtGui import QRegularExpressionValidator
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QListWidget, QGroupBox, QLineEdit, QMessageBox, QFileDialog, QDialog, QComboBox
+from PySide6.QtCore import QRegularExpression, Qt
+from PySide6.QtGui import QRegularExpressionValidator, QIcon, QFont
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QListWidget, QGroupBox, QLineEdit, QMessageBox, QFileDialog, QDialog, QComboBox, QTabWidget, QTextEdit
 import sys, cv2, os, json
 
 
@@ -103,18 +103,27 @@ class BitrateCalculator(QMainWindow):
         self.ltext_video_duration.move(self.ltext_dynamic_size2, 135)
 
         # Створення кнопки "Обчислити"
-        self.button_calc = QPushButton(self)
+        self.button_calc = QPushButton(self.widget_main)
         self.button_calc.setText(translation_text["text_button_calc"])
         self.button_calc.setFixedSize(410, 30)
         self.button_calc.move(210, 175)
         self.button_calc.clicked.connect(self.event_calculate)
 
         # Створення кнопки "Налаштування"
-        self.button_settings = QPushButton(self)
+        self.button_settings = QPushButton(self.widget_main)
         self.button_settings.setText(translation_text["text_button_settings"])
         self.button_settings.setFixedSize(195, 30)
-        self.button_settings.move(425, 280)
+        self.button_settings.move(385, 280)
         self.button_settings.clicked.connect(self.event_show_settings)
+
+        # Створення кнопки "Інформація"
+        self.button_info_icon = QIcon("icons/info.svg")
+
+        self.button_info = QPushButton(self.widget_main)
+        self.button_info.setIcon(self.button_info_icon)
+        self.button_info.setFixedSize(30, 30)
+        self.button_info.move(590, 280)
+        self.button_info.clicked.connect(self.event_show_info)
 
 
     def event_clear_history(self):
@@ -235,7 +244,7 @@ class BitrateCalculator(QMainWindow):
             with open("configs/settings.json", "w") as f:
                 json.dump(new_language, f)
 
-            self.msg_submit = QMessageBox()
+            self.msg_submit = QMessageBox(self)
             self.msg_submit.setWindowTitle(translation_text["text_notify"])
             self.msg_submit.setText(translation_text['text_msg_submit_desc'])
             self.msg_submit.setIcon(QtWidgets.QMessageBox.Icon(QMessageBox.Information))
@@ -279,6 +288,114 @@ class BitrateCalculator(QMainWindow):
         self.button_submit.clicked.connect(event_submit)
 
         self.window_settings.exec()
+
+    # Подія показу інформації про програму
+    def event_show_info(self):
+        with open("LICENSE", encoding="utf-8") as l:
+            license_desc = l.read()
+
+        with open("configs/settings.json", encoding="utf-8") as f:
+            current_language = json.load(f)
+
+        for lang_code in lang_list.values():
+            if lang_code == list(current_language.values())[0]:
+                try:
+                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+                except:
+                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                        translation_text = json.load(g)
+                        break
+
+        self.window_info = QDialog(self)
+        self.window_info.setWindowTitle(translation_text["text_title_info"])
+        self.window_info.setFixedSize(600, 300)
+
+        # Шрифт для заголовку
+        self.font_title = QFont()
+        self.font_title.setPointSize(16)
+
+        # Створення мітки-заголовка
+        self.label_version = QLabel(self.window_info)
+        self.label_version.setText("PySide Bitrate Calculator 2023.5.1")
+        self.label_version.setFont(self.font_title)
+        self.label_version.setFixedSize(self.label_version.sizeHint().width(), self.label_version.sizeHint().height())
+        self.label_version.move(10, 10)
+
+        # Створення групи з віджетів
+        self.tabwidget = QTabWidget(self.window_info)
+        self.tabwidget.setFixedSize(580, 240)
+        self.tabwidget.move(10, 50)
+
+        # Створення віджета "Про програму"
+        self.tab_about = QWidget()
+
+        # Створення мітки опису програми
+        self.label_tab_about_desc = QLabel(self.tab_about)
+        self.label_tab_about_desc.setText(translation_text["text_desc_about"])
+        self.label_tab_about_desc.setWordWrap(True)
+        self.label_tab_about_desc.setFixedWidth(550)
+        self.label_tab_about_desc.move(10, 10)
+        
+        # Створення мітки посилання на GitHub
+        self.label_link = QLabel(self.tab_about)
+        self.label_link.setText(f'{translation_text["text_desc_github"]} <a href="https://github.com/AoHeaven/PySide-Bitrate-Calculator">https://github.com/AoHeaven/PySide-Bitrate-Calculator</a>')
+        self.label_link.setWordWrap(True)
+        self.label_link.setFixedSize(550, self.label_link.sizeHint().height())
+        self.label_link.move(10, self.label_tab_about_desc.sizeHint().height()+10)
+    
+        # Створення мітки про авторське право
+        self.label_copyright = QLabel(self.tab_about)
+        self.label_copyright.setText("Copyright © 2023 Ivan Sakhno (AoHeaven).")
+        self.label_copyright.setWordWrap(True)
+        self.label_copyright.setFixedSize(550, self.label_copyright.sizeHint().height())
+        self.label_copyright.move(10, self.label_tab_about_desc.sizeHint().height()+self.label_link.sizeHint().height()-10)
+
+        # Створення віджета "Ліцензія"
+        self.tab_license = QWidget()
+
+        # Створення текстового поля з текстом ліцензії
+        self.text_license = QTextEdit(self.tab_license)
+        self.text_license.setText(license_desc)
+        self.text_license.setFixedSize(574, 211)
+        self.text_license.setReadOnly(True)
+        self.text_license.move(0, 0)
+
+
+        # Створення віджета "Використовувані бібліотеки"
+        self.tab_used_libraries = QWidget()
+
+        # Створення мітки до віджета вище
+        self.label_used_libraries = QLabel(self.tab_used_libraries)
+        self.label_used_libraries.setText(translation_text["text_used_libraries"])
+        self.label_used_libraries.setFixedWidth(self.label_used_libraries.sizeHint().width())
+        self.label_used_libraries.move(10, 10)
+
+        # PySide6
+        self.label_used_libraries_pyside = QLabel(self.tab_used_libraries)
+        self.label_used_libraries_pyside.setText(f'{translation_text["text_used_libraries_pyside"]} 6.5.0')
+        self.label_used_libraries_pyside.setFixedWidth(self.label_used_libraries.sizeHint().width())
+        self.label_used_libraries_pyside.move(10, self.label_used_libraries.sizeHint().height()+20)
+
+        # OpenCV-Python
+        self.label_used_libraries_opencv = QLabel(self.tab_used_libraries)
+        self.label_used_libraries_opencv.setText(f'{translation_text["text_used_libraries_opencv"]} 4.7.0.72')
+        self.label_used_libraries_opencv.setFixedWidth(self.label_used_libraries.sizeHint().width())
+        self.label_used_libraries_opencv.move(10, self.label_used_libraries.sizeHint().height()+self.label_used_libraries_pyside.sizeHint().height()+30)
+
+        # Py2exe
+        self.label_used_libraries_autopytoexe = QLabel(self.tab_used_libraries)
+        self.label_used_libraries_autopytoexe.setText(f'{translation_text["text_used_libraries_autopytoexe"]} 2.34.0')
+        self.label_used_libraries_autopytoexe.setFixedWidth(self.label_used_libraries.sizeHint().width())
+        self.label_used_libraries_autopytoexe.move(10, self.label_used_libraries.sizeHint().height()+self.label_used_libraries_pyside.sizeHint().height()+self.label_used_libraries_opencv.sizeHint().height()+40)
+
+
+        self.tabwidget.addTab(self.tab_about, translation_text["text_title_about"])
+        self.tabwidget.addTab(self.tab_license, translation_text["text_title_license"])
+        self.tabwidget.addTab(self.tab_used_libraries, translation_text["text_title_used_libraries"])
+
+        self.window_info.exec()
 
 
 app = QApplication(sys.argv)
