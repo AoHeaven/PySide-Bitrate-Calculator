@@ -19,5 +19,15 @@
     "text_kbits": "kbps",
     "text_language": "Language",
     "text_notify": "Notification",
-    "text_msg_submit_desc": "The program will be closed until the new settings are applied."
+    "text_msg_submit_desc": "The program will be closed until the new settings are applied.",
+    "text_title_info": "Information",
+    "text_title_about": "About the program",
+    "text_desc_about": "An average video bitrate calculator written in Python using the PySide6 library GUI and the OpenCV library.",
+    "text_desc_github": "Follow the updates on GitHub:",
+    "text_title_license": "License",
+    "text_title_used_libraries": "Used libraries",
+    "text_used_libraries": "The following libraries were used to develop the program:",
+    "text_used_libraries_pyside": "PySide6:",
+    "text_used_libraries_opencv": "OpenCV-Python:",
+    "text_used_libraries_autopytoexe": "Auto Py to Exe:"
 }

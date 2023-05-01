@@ -19,5 +19,15 @@
     "text_kbits": "кбіт/с",
     "text_language": "Мова",
     "text_notify": "Сповіщення",
-    "text_msg_submit_desc": "Програма буде закрита для застосування нових налаштувань."
+    "text_msg_submit_desc": "Програма буде закрита для застосування нових налаштувань.",
+    "text_title_info": "Інформація",
+    "text_title_about": "Про програму",
+    "text_desc_about": "Калькулятор середнього бітрейту відео, написаний на Python з використанням GUI бібліотеки PySide6 та бібліотеки OpenCV.",
+    "text_desc_github": "Слідкуйте за оновленнями на GitHub:",
+    "text_title_license": "Ліцензія",
+    "text_title_used_libraries": "Використовувані бібліотеки",
+    "text_used_libraries": "При розробці програми були використані наступні бібліотеки:",
+    "text_used_libraries_pyside": "PySide6:",
+    "text_used_libraries_opencv": "OpenCV-Python:",
+    "text_used_libraries_autopytoexe": "Auto Py to Exe:"
 }
