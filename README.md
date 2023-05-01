@@ -1,6 +1,6 @@
 # PySide Bitrate Calculator
  
-![PySide Bitrate Calculator](https://i.ibb.co/7CBqKRV/pyside-bitrate-calculator.png)
+![PySide Bitrate Calculator](/screenshots/bitrate_calculator.png)
 
 The program was written for myself, but was uploaded for everyone to use.
 
