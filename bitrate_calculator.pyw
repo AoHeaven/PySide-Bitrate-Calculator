@@ -1,9 +1,8 @@
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QRegularExpression, Qt
+from PySide6 import QtWidgets
+from PySide6.QtCore import QRegularExpression
 from PySide6.QtGui import QRegularExpressionValidator, QIcon, QFont
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QPushButton, QListWidget, QGroupBox, QLineEdit, QMessageBox, QFileDialog, QDialog, QComboBox, QTabWidget, QTextEdit
 import sys, cv2, os, json
-
 
 # Завантаження списку усіх мов. Якщо ваша мова відсутня в списку, напишіть мені, я залюбки додам її
 with open("configs/languages.json", encoding="utf-8") as languages:
@@ -13,21 +12,21 @@ with open("configs/languages.json", encoding="utf-8") as languages:
     with open("configs/settings.json", encoding="utf-8") as f:
         settings = json.load(f)
 
+# Завантаження перекладу до вибраної мови
+for lang_code in lang_list.values():
+    if settings['language'] == lang_code:
+        try:
+            with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
+                translation_text = json.load(g)
+                break
+        except:
+            with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
+                translation_text = json.load(g)
+                break
+
 class BitrateCalculator(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        # Завантаження перекладу до вибраної мови
-        for lang_code in lang_list.values():
-            if settings['language'] == lang_code:
-                try:
-                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-                except:
-                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
 
         # Параметри вікна
         self.setWindowTitle(translation_text["text_window_title"])
@@ -128,20 +127,6 @@ class BitrateCalculator(QMainWindow):
 
     def event_clear_history(self):
         if not self.list_history.count() == 0:
-            with open("configs/settings.json", encoding="utf-8") as f:
-                current_language = json.load(f)
-
-            for lang_code in lang_list.values():
-                if lang_code == list(current_language.values())[0]:
-                    try:
-                        with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
-                            translation_text = json.load(g)
-                            break
-                    except:
-                        with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
-                            translation_text = json.load(g)
-                            break
-
             self.list_history.clear()
 
             self.msg_clear_history = QMessageBox(self)
@@ -152,20 +137,6 @@ class BitrateCalculator(QMainWindow):
 
 
     def event_open_file(self):
-        with open("configs/settings.json", encoding="utf-8") as f:
-            current_language = json.load(f)
-
-        for lang_code in lang_list.values():
-            if lang_code == list(current_language.values())[0]:
-                try:
-                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-                except:
-                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-
         self.file_path, _ = QFileDialog.getOpenFileName(None, translation_text["text_open_dialog_title"], "", "Video Files (*.avi *.mp4 *.mkv *.mov *.wmv *.webm)")
 
         if self.file_path:
@@ -179,20 +150,6 @@ class BitrateCalculator(QMainWindow):
 
 
     def event_calculate(self):
-        with open("configs/settings.json", encoding="utf-8") as f:
-            current_language = json.load(f)
-
-        for lang_code in lang_list.values():
-            if lang_code == list(current_language.values())[0]:
-                try:
-                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-                except:
-                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-
         self.result_msg = QMessageBox(self)
 
         if not self.ltext_video_size.text().strip() or not self.ltext_video_duration.text().strip():
@@ -217,20 +174,6 @@ class BitrateCalculator(QMainWindow):
 
 
     def event_show_settings(self):  
-        with open("configs/settings.json", encoding="utf-8") as f:
-            current_language = json.load(f)
-
-        for lang_code in lang_list.values():
-            if lang_code == list(current_language.values())[0]:
-                try:
-                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-                except:
-                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-
         path = 'lang/'
         files = os.listdir(path)
 
@@ -289,24 +232,11 @@ class BitrateCalculator(QMainWindow):
 
         self.window_settings.exec()
 
+
     # Подія показу інформації про програму
     def event_show_info(self):
         with open("LICENSE", encoding="utf-8") as l:
             license_desc = l.read()
-
-        with open("configs/settings.json", encoding="utf-8") as f:
-            current_language = json.load(f)
-
-        for lang_code in lang_list.values():
-            if lang_code == list(current_language.values())[0]:
-                try:
-                    with open(f'lang/{lang_code}.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
-                except:
-                    with open(f'lang/enUS.json', "r", encoding="utf-8") as g:
-                        translation_text = json.load(g)
-                        break
 
         self.window_info = QDialog(self)
         self.window_info.setWindowTitle(translation_text["text_title_info"])
