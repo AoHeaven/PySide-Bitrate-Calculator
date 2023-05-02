@@ -185,7 +185,7 @@ class BitrateCalculator(QMainWindow):
                     new_language['language'] = language_code
 
             with open("configs/settings.json", "w") as f:
-                json.dump(new_language, f)
+                json.dump(new_language, f, indent=4)
 
             self.msg_submit = QMessageBox(self)
             self.msg_submit.setWindowTitle(translation_text["text_notify"])
